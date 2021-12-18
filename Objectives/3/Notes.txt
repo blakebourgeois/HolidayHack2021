@@ -1,0 +1,5 @@
+Jack Frost Tower Wifi:
+elf@103f2fee3a26:~$ iwconfig wlan0 essid FROST-Nidus-Setup 
+** New network connection to Nidus Thermostat detected! Visit http://nidus-setup:8080/ to complete setup
+(The setup is compatible with the 'curl' utility)
+

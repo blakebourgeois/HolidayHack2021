@@ -1,0 +1,34 @@
+Answer all the questions in the quizme executable:
+- What port does 34.76.1.22 have open?
+elf@6e5595dc136e:~$ grep 34.76.1.22 bigscan.gnmap 
+Host: 34.76.1.22 ()     Status: Up
+Host: 34.76.1.22 ()     Ports: 62078/open/tcp//iphone-sync///      Ignored State: closed (999)
+
+- What port does 34.77.207.226 have open?
+elf@6e5595dc136e:~$ grep 34.77.207.226 bigscan.gnmap 
+Host: 34.77.207.226 ()     Status: Up
+Host: 34.77.207.226 ()     Ports: 8080/open/tcp//http-proxy///      Ignored State: filtered (999)
+
+- How many hosts appear "Up" in the scan?
+elf@6e5595dc136e:~$ grep "Status: Up" bigscan.gnmap | wc -l
+26054
+
+- How many hosts have a web port open?  (Let's just use TCP ports 80, 443, and 8080)
+lf@6e5595dc136e:~$ grep '80/open/tcp//http\|443/open/tcp//https\|8080/open/tch//http' bigscan.gnmap | wc -l
+14372
+
+- How many hosts with status Up have no (detected) open TCP ports?
+elf@6e5595dc136e:~$ grep Ports bigscan.gnmap | wc -l
+25652
+elf@6e5595dc136e:~$ expr 26054 - 25652
+402
+
+(hosts with no open ports do not have a corresponding "Ports" output line)
+
+
+- What's the greatest number of TCP ports any one host has open?
+elf@6e5595dc136e:~$ grep "Status: Up" -A 1 bigscan.gnmap | grep "Status: Up" -v | cut -d'(' -f3| sort -r
+(hacky command to pull out the filtered/closed result at the end of the scan result and sort them)
+988 closed (implies 12 open)
+
+

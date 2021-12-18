@@ -1,0 +1,102 @@
+HELP!!!
+
+This critical application is supposed to tell us the sweetness levels of our candy
+manufacturing output (among other important things), but I can't get it to run.
+
+It keeps saying something something yara. Can you take a look and see if you
+can help get this application to bypass Sparkle Redberry's Yara scanner?
+
+If we can identify the rule that is triggering, we might be able change the program
+to bypass the scanner.
+
+We have some tools on the system that might help us get this application going:
+vim, emacs, nano, yara, and xxd
+
+The children will be very disappointed if their candy won't even cause a single cavity.
+
+snowball2@467f4030cc95:~$ the_critical_elf_app
+yara_rule_135 the_critical_elf_app
+
+snowball2@467f4030cc95:~/yara_rules$ grep "yara_rule_135 {" rules.yar -A 30
+rule yara_rule_135 {
+   meta:
+      description = "binaries - file Sugar_in_the_machinery"
+      author = "Sparkle Redberry"
+      reference = "North Pole Malware Research Lab"
+      date = "1955-04-21"
+      hash = "19ecaadb2159b566c39c999b0f860b4d8fc2824eb648e275f57a6dbceaf9b488"
+   strings:
+      $s = "candycane"
+   condition:
+      $s
+}
+
+open the file with vim
+change to hex (:%! xxd)
+modified candycane to candycxxe (78 78)
+revert (:%! xxd -r)
+save (:wq)
+
+
+snowball2@86cd63f0801e:~$ the_critical_elf_app
+yara_rule_1056 the_critical_elf_app
+bash: the_critical_elf_app: command not found
+
+snowball2@86cd63f0801e:~/yara_rules$ grep yara_rule_1056 rules.yar -A 30
+rule yara_rule_1056 {
+   meta: 
+        description = "binaries - file frosty.exe"
+        author = "Sparkle Redberry"
+        reference = "North Pole Malware Research Lab"
+        date = "1955-04-21"
+        hash = "b9b95f671e3d54318b3fd4db1ba3b813325fcef462070da163193d7acb5fcd03"
+    strings:
+        $s1 = {6c 6962 632e 736f 2e36}
+        $hs2 = {726f 6772 616d 2121}
+    condition:
+        all of them
+}
+
+6c 6962 632e 736f 2e36 -> libc.so.6 (probably shoudn't be modified...)
+726f 6772 616d 2121 -> "rogram!!"
+
+replaced !! (2121) with xx (7878) again
+
+snowball2@86cd63f0801e:~$ the_critical_elf_app_hex
+yara_rule_1732 the_critical_elf_app_hex
+
+snowball2@86cd63f0801e:~/yara_rules$ grep yara_rule_1732 rules.yar -A 40
+rule yara_rule_1732 {
+   meta:
+      description = "binaries - alwayz_winter.exe"
+      author = "Santa"
+      reference = "North Pole Malware Research Lab"
+      date = "1955-04-22"
+      hash = "c1e31a539898aab18f483d9e7b3c698ea45799e78bddc919a7dbebb1b40193a8"
+   strings:
+      $s1 = "This is critical for the execution of this program!!" fullword ascii
+      $s2 = "__frame_dummy_init_array_entry" fullword ascii
+      $s3 = ".note.gnu.property" fullword ascii
+      $s4 = ".eh_frame_hdr" fullword ascii
+      $s5 = "__FRAME_END__" fullword ascii
+      $s6 = "__GNU_EH_FRAME_HDR" fullword ascii
+      $s7 = "frame_dummy" fullword ascii
+      $s8 = ".note.gnu.build-id" fullword ascii
+      $s9 = "completed.8060" fullword ascii
+      $s10 = "_IO_stdin_used" fullword ascii
+      $s11 = ".note.ABI-tag" fullword ascii
+      $s12 = "naughty string" fullword ascii
+      $s13 = "dastardly string" fullword ascii
+      $s14 = "__do_global_dtors_aux_fini_array_entry" fullword ascii
+      $s15 = "__libc_start_main@@GLIBC_2.2.5" fullword ascii
+      $s16 = "GLIBC_2.2.5" fullword ascii
+      $s17 = "its_a_holly_jolly_variable" fullword ascii
+      $s18 = "__cxa_finalize" fullword ascii
+      $s19 = "HolidayHackChallenge{NotReallyAFlag}" fullword ascii
+      $s20 = "__libc_csu_init" fullword ascii
+   condition:
+      uint32(1) == 0x02464c45 and filesize < 50KB and
+      10 of them
+}
+
+add a ton of junk data to the end of the file to exceed the 50kb limit and avoid the rule!
