@@ -1,0 +1,23 @@
+ip addr sho - 192.168.160.3
+
+nmap 192.168.160.0/24 for hosts
+
+192.168.160.1 - 22, 8000/open; 3000 filtered
+192.168.160.2, 80
+(ipv6-server.ipv6guest.kringlecastle.com)
+
+curl 192.168.160.1:8000, complains about missing api key
+curl 192.168.160.2:80, suggests hitting with ipv6 address
+
+ping6 ipv6-server.ipv6guest.kringlecastle.com to expose ipv6 address
+address: 2604:6000:1528:cd:d55a:f8a7:d30a:e405
+
+curl ipv6-server.ipv6guest.kringlecastle.com
+"connect to other open tcp port to et striper's activation phrase"
+
+
+nmap -6 -Pn -p- ipv6-server.ipv6guest.kringlecastle.com
+9000/tcp open
+
+curl ipv6-server.ipv6guest.kringlecastle.com:9000
+PieceOnEarth

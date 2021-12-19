@@ -1,0 +1,360 @@
+Level 1 - Get Moving
+Objective
+Move the elf to collect the lollipops and get to the KringleCon entrance at dict location {"x":2,"y":2}.
+
+Hint
+You can click on the Elf picture in the OBJECT HELP menu for information on all of the elf move functions.
+
+elf.moveLeft(10)
+elf.moveUp(100)
+
+level2
+
+Use no more than 10 lines of code and 6
+object function calls.
+
+import elf, munchkins, levers, lollipops, yeeters, pits
+all_lollipops = lollipops.get()
+lollipop1 = all_lollipops[1]
+lollipop0 = lollipops.get(0)
+elf.moveTo(lollipop1.position)
+elf.moveTo(lollipop0.position)
+elf.moveLeft(3)
+elf.moveUp(100)
+
+Level 3 - Don't Get Yeeted!
+Objective
+Move the elf to collect the lollipops and get to the KringleCon entrance.
+
+Hint
+You can walk past the Yeeter once you complete lever0's task and lever0.pull(modified_data) in the desired way to disable to Yeeter trap. Click on the lever 0 object in the CURRENT LEVEL OBJECTS panel for more information.
+
+LEVER #0 OBJECTIVE
+Objective
+
+Add 2 to the returned int value of running the function lever0.data() .
+
+For example, if you wanted to multiply the value by 3 and store to a variable, you could do:
+sum = lever0.data() * 3
+
+Then submit the sum using:
+lever0.pull(sum)
+
+Note
+
+If you submit a correct answer to lever.pull(answer), then the lever and its corresponding trap will be disabled.
+
+In order to run lever.pull(answer) with lever (#0), you must be standing in its grid square located at (x:6,y:12).
+
+This particular lever object can be saved to a variable named lever using lever = levers.get(0)
+
+
+import elf, munchkins, levers, lollipops, yeeters, pits
+lever0 = levers.get(0)
+lollipop0 = lollipops.get(0)
+elf.moveLeft(6)
+sum = lever0.data() + 2
+lever0.pull(sum)
+elf.moveLeft(4)
+elf.moveUp(100)
+
+Level 4 - Data Types
+Objective
+Pull ALL of the levers by submitting the requested data for each using lever.pull(data) to disable the Yeeter trap at the KringleCon entrance.
+
+Hints
+Move the elf to the lever. Get the lever data lever.data() and perform the appropriate action to the data. Submit the modified data using lever.pull(modified_data).
+
+This level requires you to check and convert variable data types (bool, int, str, float, list, dict, etc.) This link should prove useful. Some data type examples include:
+
+10 - This has a data type of int
+"Hello World" - This has a data type of str
+[1,2,3] - This has a data type of list. This list contains three int objects.
+
+
+LEVER #4 OBJECTIVE
+Objective
+
+Submit ANY string object to this lever using lever.pull(string_object)
+
+Note
+
+If you submit a correct answer to lever.pull(answer), then the lever and its corresponding trap will be disabled.
+
+In order to run lever.pull(answer) with lever (#4), you must be standing in its grid square located at (x:2,y:12).
+
+This particular lever object can be saved to a variable named lever using lever = levers.get(4)
+
+LEVER #3 OBJECTIVE
+Objective
+
+Submit ANY bool object to this lever using lever.pull(bool_object)
+
+Note
+
+If you submit a correct answer to lever.pull(answer), then the lever and its corresponding trap will be disabled.
+
+In order to run lever.pull(answer) with lever (#3), you must be standing in its grid square located at (x:2,y:10).
+
+This particular lever object can be saved to a variable named lever using lever = levers.get(3)
+
+LEVER #2 OBJECTIVE
+Objective
+
+Submit ANY int or float object to this lever using lever.pull(int_object)
+
+Note
+
+If you submit a correct answer to lever.pull(answer), then the lever and its corresponding trap will be disabled.
+
+In order to run lever.pull(answer) with lever (#2), you must be standing in its grid square located at (x:2,y:8).
+
+This particular lever object can be saved to a variable named lever using lever = levers.get(2)
+
+LEVER #1 OBJECTIVE
+Objective
+
+Submit ANY list object to this lever using lever.pull(list_object)
+
+Note
+
+If you submit a correct answer to lever.pull(answer), then the lever and its corresponding trap will be disabled.
+
+In order to run lever.pull(answer) with lever (#1), you must be standing in its grid square located at (x:2,y:6).
+
+This particular lever object can be saved to a variable named lever using lever = levers.get(1)
+
+LEVER #0 OBJECTIVE
+Objective
+
+Submit ANY dict object to this lever using lever.pull(dict_object)
+
+Note
+
+If you submit a correct answer to lever.pull(answer), then the lever and its corresponding trap will be disabled.
+
+In order to run lever.pull(answer) with lever (#0), you must be standing in its grid square located at (x:2,y:4).
+
+This particular lever object can be saved to a variable named lever using lever = levers.get(0)
+
+
+import elf, munchkins, levers, lollipops, yeeters, pits
+lever0, lever1, lever2, lever3, lever4 = levers.get()
+elf.moveLeft(2)
+lever4.pull("A string")
+elf.moveUp(2)
+lever3.pull(True)
+elf.moveUp(2)
+lever2.pull(666)
+elf.moveUp(2)
+lever1.pull([420,69])
+elf.moveUp(2)
+lever0.pull({"ayy" : "lmao", "here come" : "dat boy"})
+elf.moveUp(100)
+
+Level 5 - Conversions and Comparisons
+Objective
+Pull all of the levers by submitting the requested data for each using lever.pull(data) to disable the Yeeter trap at the KringleCon entrance.
+
+Hint
+Move the elf to the lever. Get the lever data lever.data() and perform the appropriate action to the data. Submit the modified data using lever.pull(modified_data).
+
+LEVER #4 OBJECTIVE
+Objective
+
+Calling lever.data() will return a string to you. Take this string and concatenate it with a string of " concatenate". Submit these two concatenated strings using lever.pull(concatenated_strings) .
+
+Note
+
+If you submit a correct answer to lever.pull(answer), then the lever and its corresponding trap will be disabled.
+
+In order to run lever.pull(answer) with lever (#4), you must be standing in its grid square located at (x:2,y:12).
+
+This particular lever object can be saved to a variable named lever using lever = levers.get(4)
+
+Objective
+
+Submit the inverse bool object returned by pulling lever.data() to this lever using lever.pull(inversed_bool_object). For example, if True is returned, then you must submit False.
+
+Note
+
+If you submit a correct answer to lever.pull(answer), then the lever and its corresponding trap will be disabled.
+
+In order to run lever.pull(answer) with lever (#3), you must be standing in its grid square located at (x:2,y:10).
+
+This particular lever object can be saved to a variable named lever using lever = levers.get(3)
+
+Objective
+
+Add one 1 + to the integer returned from running lever.data(). Then submit this modified int using lever.pull(int_one_plus).
+
+Note
+
+If you submit a correct answer to lever.pull(answer), then the lever and its corresponding trap will be disabled.
+
+In order to run lever.pull(answer) with lever (#2), you must be standing in its grid square located at (x:2,y:8).
+
+This particular lever object can be saved to a variable named lever using lever = levers.get(2)
+
+
+LEVER #1 OBJECTIVE
+Objective
+
+Append the int 1 to the end of the list returned from running lever.data(). Submit this new list using lever.pull(appended_list).
+
+Note
+
+If you submit a correct answer to lever.pull(answer), then the lever and its corresponding trap will be disabled.
+
+In order to run lever.pull(answer) with lever (#1), you must be standing in its grid square located at (x:2,y:6).
+
+This particular lever object can be saved to a variable named lever using lever = levers.get(1)
+
+LEVER #0 OBJECTIVE
+Objective
+
+lever.data() will return a dict object. Add a key and value pair to this dictionary of "strkey":"strvalue" and then submit this modified dictionary using lever.pull(modified_dict).
+
+Note
+
+If you submit a correct answer to lever.pull(answer), then the lever and its corresponding trap will be disabled.
+
+In order to run lever.pull(answer) with lever (#0), you must be standing in its grid square located at (x:2,y:4).
+
+This particular lever object can be saved to a variable named lever using lever = levers.get(0)
+
+
+import elf, munchkins, levers, lollipops, yeeters, pits
+lever0, lever1, lever2, lever3, lever4 = levers.get()
+elf.moveLeft(2)
+lever4.pull(lever4.data()+" concatenate")
+elf.moveUp(2)
+def my_answer(wat):
+    return not wat
+lever3.pull(my_answer(lever3.data()))
+elf.moveUp(2)
+lever2.pull(lever2.data()+1)
+elf.moveUp(2)
+myList = lever1.data()
+myList.append(1)
+lever1.pull(myList)
+elf.moveUp(2)
+lev0ans = lever0.data()
+lev0ans['strkey'] = 'strvalue'
+lever0.pull(lev0ans)
+elf.moveUp(100)
+
+Level 6 - Types And Conditionals
+Objective
+Move the elf to the lever. Get the lever data lever.data() and perform the appropriate action to the data. Submit the modified data using lever.pull(modified_data).
+
+Hints
+This level requires the use of operators to compare and modify data. This link on operators should help.
+
+Data types will also need to be checked using conditionals in if, elif, else statements. This link on conditionals should help.
+
+You will also need to use conditionals to check data types. This link on types should help.
+
+For example, if you want to check the type of a variable, you could use:
+
+if type(var) == str:
+    print("Its a string!")
+
+Objective
+
+Calling lever.data() will return a boolean, a number, a list of integers, a string, or a dict with "a" and an integer to you. For a boolean, return the inverse. For a number, return double the number. For a list of integers, return that list with each integer incremented by 1. For a string, return the string concatenated with itself. For a dict, return the dict with a's value + 1. Submit this response using lever.pull(conditional_answer) .
+
+Note
+
+If you submit a correct answer to lever.pull(answer), then the lever and its corresponding trap will be disabled.
+
+In order to run lever.pull(answer) with lever (#0), you must be standing in its grid square located at (x:2,y:4).
+
+This particular lever object can be saved to a variable named lever using lever = levers.get(0)
+
+
+import elf, munchkins, levers, lollipops, yeeters, pits
+lever0 = levers.get(0)
+ansCheck = lever0.data()
+def getAns(checkIt):
+    if type(checkIt) == str:
+        return checkIt+checkIt
+    if type(checkIt) == bool:
+        return not checkIt
+    if type(checkIt) == int:
+        return checkIt*2
+    if type(checkIt) == list:
+        checkItNew=[ i+1 for i in checkIt]
+        return checkItNew
+    if type(checkIt) == dict:
+        checkIt["a"] = checkIt["a"] + 1
+        return checkIt
+elf.moveUp(2)
+lever0.pull(getAns(ansCheck))
+elf.moveUp(100)
+
+
+Level 7 - Up Down Loopiness
+Objective
+Navigate through the obstacles and collect the lollipop before arriving at the KringleCon entrance.
+
+Hints
+Using a for loop can reduce how many lines and/or object function calls are used. This link on for loops may be helpful.
+
+Using elf.moveLeft(40) will move your elf as far as possible before hitting an obstacle or the end of the screen. Use however large a number you think you need!
+
+import elf, munchkins, levers, lollipops, yeeters, pits
+for num in range(2): #not sure if number is right
+    elf.moveLeft(3)
+    elf.moveUp(100)
+    elf.moveLeft(3)
+    elf.moveDown(100)
+elf.moveLeft(3)
+elf.moveUp(1000)
+
+
+Level 8 - Two Paths, Your Choice
+Objective
+Navigate past the obstacles and avoid the munchkin watching the KringleCon entrance.
+
+Hints
+Reduce the number of lines necessary to reach the KringleCon entrance by using a loop. This link on for loops will be helpful.
+
+There are two paths for you to choose from. Choosing the lever takes more steps but may be easier to solve.
+
+LEVER #0 OBJECTIVE
+Objective
+
+Use lever.data() to be returned an array similar to:
+
+[1, 2, 3, "c", "d", 4]
+
+Add the string "munchkins rule" to the front of this array. The example array above would become:
+
+["munchkins rule", 1, 2, 3, "c", "d", 4]
+
+Then submit this new array to elf.pull_lever(answer)
+
+Lever Result:
+The bridge  over the pit at (x:3, y:3) will be lowered .
+
+
+If you submit a correct answer to lever.pull(answer), then the lever and its corresponding trap will be disabled.
+
+In order to run lever.pull(answer) with lever (#0), you must be standing in its grid square located at (x:8,y:1).
+
+This particular lever object can be saved to a variable named lever using lever = levers.get(0)
+
+
+
+
+import elf, munchkins, levers, lollipops, yeeters, pits
+all_lollipops = lollipops.get()
+lever0 = levers.get(0)
+for lollipop in all_lollipops:
+    elf.moveTo(lollipop.position)
+elf.moveTo(lever0.position)
+lever0.pull(["munchkins rule"] + lever0.data())
+elf.moveDown(4)
+elf.moveLeft(6)
+elf.moveUp(100)

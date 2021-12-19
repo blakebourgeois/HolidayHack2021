@@ -1,0 +1,10 @@
+mallard.py is a ducky decoder
+python3 mallard.py --file /mnt/USBDEVICE/inject.bin
+
+read code
+
+there is a base64 string that is reversed
+the ducky creates the string, reverses it, pipes it to b64 decode, then pipes to bash
+the code itself adds an ssh key to the authorized keys file
+
+the user is ickymcgoop

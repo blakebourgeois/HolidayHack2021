@@ -1,0 +1,5 @@
+exiftool * against the directory
+one file metadata shows Jack Frost last edited it
+file was 2021-12-21.docx
+
+
