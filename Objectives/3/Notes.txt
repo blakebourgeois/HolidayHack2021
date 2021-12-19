@@ -3,3 +3,79 @@ elf@103f2fee3a26:~$ iwconfig wlan0 essid FROST-Nidus-Setup
 ** New network connection to Nidus Thermostat detected! Visit http://nidus-setup:8080/ to complete setup
 (The setup is compatible with the 'curl' utility)
 
+elf@526a2a419941:~$ curl http://nidus-setup:8080
+◈──────────────────────────────────────────────────────────────────────────────◈
+
+Nidus Thermostat Setup
+
+◈──────────────────────────────────────────────────────────────────────────────◈
+
+WARNING Your Nidus Thermostat is not currently configured! Access to this
+device is restricted until you register your thermostat » /register. Once you
+have completed registration, the device will be fully activated.
+
+In the meantime, Due to North Pole Health and Safety regulations
+42 N.P.H.S 2600(h)(0) - frostbite protection, you may adjust the temperature.
+
+API
+
+The API for your Nidus Thermostat is located at http://nidus-setup:8080/apidoc
+
+check the API:
+
+Nidus Thermostat API
+
+◈──────────────────────────────────────────────────────────────────────────────◈
+
+The API endpoints are accessed via:
+
+http://nidus-setup:8080/api/<endpoint>
+
+Utilize a GET request to query information; for example, you can check the
+temperatures set on your cooler with:
+
+curl -XGET http://nidus-setup:8080/api/cooler
+
+Utilize a POST request with a JSON payload to configuration information; for
+example, you can change the temperature on your cooler using:
+
+curl -XPOST -H 'Content-Type: application/json' \
+  --data-binary '{"temperature": -40}' \
+  http://nidus-setup:8080/api/cooler
+
+
+● WARNING: DO NOT SET THE TEMPERATURE ABOVE 0! That might melt important furniture
+
+Available endpoints
+
+┌─────────────────────────────┬────────────────────────────────┐
+│ Path                        │ Available without registering? │ 
+├─────────────────────────────┼────────────────────────────────┤
+│ /api/cooler                 │ Yes                            │ 
+├─────────────────────────────┼────────────────────────────────┤
+│ /api/hot-ice-tank           │ No                             │ 
+├─────────────────────────────┼────────────────────────────────┤
+│ /api/snow-shower            │ No                             │ 
+├─────────────────────────────┼────────────────────────────────┤
+│ /api/melted-ice-maker       │ No                             │ 
+├─────────────────────────────┼────────────────────────────────┤
+│ /api/frozen-cocoa-dispenser │ No                             │ 
+├─────────────────────────────┼────────────────────────────────┤
+│ /api/toilet-seat-cooler     │ No                             │ 
+├─────────────────────────────┼────────────────────────────────┤
+│ /api/server-room-warmer     │ No                             │ 
+
+
+try this to unauth endpoint to open door?
+curl -XPOST -H 'Content-Type: application/json' --data-binary '{"temperature": 2}' http://nidus-setup:8080/api/cooler
+
+elf@526a2a419941:~$ curl -XPOST -H 'Content-Type: application/json' --data-binary '{"temperature": 2}' http://nidus-setup:8080/api/cooler
+{
+  "temperature": 2.69,
+  "humidity": 50.98,
+  "wind": 7.57,
+  "windchill": 0.55,
+  "WARNING": "ICE MELT DETECTED!"
+}
+
+boom

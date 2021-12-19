@@ -1,0 +1,16 @@
+Need to set up the logic gates to light all three outputs
+
+Six gates available:
+AND (both inputs must be 1)
+OR (either input can be 1)
+XOR (both inputs must be different)
+NAND (negated and--both inputs must be 0)
+NOR (negated OR--if both inputs are 0, will return 1; otherwise returns 1)
+XNOR - (negated XOR--output of 1 if both inputs are the same; otherwise returns 0)
+
+Input 1 -> OFF -> GATE 1
+Input 2 -> ON -> GATE 1 and GATE 2
+Input 3 - OFF - GATE 2 and GATE 3
+Input 4 - ON - GATE 4
+
+

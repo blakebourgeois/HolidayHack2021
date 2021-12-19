@@ -1,0 +1,154 @@
+Shellcode Primer
+
+Complete the Shellcode Primer in Jack's office. According to the last challenge, what is the secret to KringleCon success? "All of our speakers and organizers, providing the gift of ____, free to the community." Talk to Chimney Scissorsticks in the NetWars area for hints.
+
+Secret to KringleCon success: all of our speakers and organizers, providing the gift of cyber security knowledge, free to the community.
+
+
+<introduction>
+code is provided
+
+<loops>
+code is provided
+
+3. getting started
+ret
+
+4. returning a value
+mov rax, 1337
+ret
+
+5. system calls
+
+To perform a syscall:
+
+The number for the desired syscall is moved into rax
+The first parameter is moved into rdi, the second into rsi, and the third into rdx (there are others, but not many syscalls need more than 3 parameters)
+Execute the syscall instruction
+
+; TODO: Find the syscall number for sys_exit and put it in rax
+mov rax,60
+; TODO: Put the exit_code we want (99) in rdi
+mov rdi,99
+; Perform the actual syscall
+syscall
+
+6. calling into the void
+
+code is provided
+
+7. getting RIP
+
+; Remember, this call pushes the return address to the stack
+call place_below_the_nop
+
+; This is where the function *thinks* it is supposed to return
+nop
+
+; This is a 'label' - as far as the call knows, this is the start of a function
+place_below_the_nop:
+
+; TODO: Pop the top of the stack into rax
+pop rax
+
+; Return from our code, as in previous levels
+ret
+
+8. hello, world
+; This would be a good place for a call
+ call hello_world
+; This is the literal string 'Hello World', null terminated, as code. Except
+; it'll crash if it actually tries to run, so we'd better jump over it!
+db 'Hello World',0
+
+; This would be a good place for a label and a pop
+hello_world:
+pop rax
+; This would be a good place for a re... oh wait, it's already here. Hooray!
+ret
+
+
+9. hello, world!!
+; TODO: Get a reference to this string into the correct register
+call hello_world
+
+db 'Hello World!',0
+
+hello_world:
+pop rbx
+
+
+; Set up a call to sys_write
+; TODO: Set rax to the correct syscall number for sys_write
+mov rax,1
+
+; TODO: Set rdi to the first argument (the file descriptor, 1)
+mov rdi,1
+
+; TODO: Set rsi to the second argument (buf - this is the "Hello World" string)
+mov rsi,rbx
+
+; TODO: Set rdx to the third argument (length of the string, in bytes)
+mov rdx,12
+
+; Perform the syscall
+syscall
+mov rax,rbx
+; Return cleanly
+ret
+
+
+10. opening a file
+; TODO: Get a reference to this string into the correct register
+call etc_passwd
+db '/etc/passwd',0
+
+etc_passwd:
+pop rbx
+
+; Set up a call to sys_open
+; TODO: Set rax to the correct syscall number
+mov rax,2
+; TODO: Set rdi to the first argument (the filename)
+mov rdi,rbx
+; TODO: Set rsi to the second argument (flags - 0 is fine)
+mov rsi,0
+; TODO: Set rdx to the third argument (mode - 0 is also fine)
+mov rdx,0
+; Perform the syscall
+syscall
+
+; syscall sets rax to the file handle, so to return the file handle we don't
+; need to do anything else!
+ret
+
+
+11. reading a file
+
+; TODO: Get a reference to this
+call np_secrets
+db '/var/northpolesecrets.txt',0
+np_secrets:
+pop rbx
+; TODO: Call sys_open
+mov rax,2
+mov rdi,rbx
+mov rsi,0
+mov rdx, 0
+syscall
+; TODO: Call sys_read on the file handle and read it into rsp
+mov rdi,rax
+mov rax,0
+mov rsi,rsp
+mov rdx,140
+syscall
+; TODO: Call sys_write to write the contents from rsp to stdout (1)
+mov rax,1
+mov rdi,1
+mov rsi,rsp
+mov rdx,140
+syscall
+; TODO: Call sys_exit
+mov rax,60
+mov rdi,0
+syscall
