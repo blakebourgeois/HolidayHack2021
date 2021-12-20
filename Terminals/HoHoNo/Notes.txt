@@ -1,0 +1,66 @@
+Jack is trying to break into Santa's workshop!
+
+Santa's elves are working 24/7 to manually look through logs, identify the
+malicious IP addresses, and block them. We need your help to automate this so
+the elves can get back to making presents!
+
+Can you configure Fail2Ban to detect and block the bad IPs?
+
+ * You must monitor for new log entries in /var/log/hohono.log
+ * If an IP generates 10 or more failure messages within an hour then it must
+   be added to the naughty list by running naughtylist add <ip>
+        /root/naughtylist add 12.34.56.78
+ * You can also remove an IP with naughtylist del <ip>
+        /root/naughtylist del 12.34.56.78
+ * You can check which IPs are currently on the naughty list by running
+        /root/naughtylist list
+
+You'll be rewarded if you correctly identify all the malicious IPs with a
+Fail2Ban filter in /etc/fail2ban/filter.d, an action to ban and unban in
+/etc/fail2ban/action.d, and a custom jail in /etc/fail2ban/jail.d. Don't
+add any nice IPs to the naughty list!
+
+*** IMPORTANT NOTE! ***
+
+Fail2Ban won't rescan any logs it has already seen. That means it won't
+automatically process the log file each time you make changes to the Fail2Ban
+config. When needed, run /root/naughtylist refresh to re-sample the log file
+and tell Fail2Ban to reprocess it.
+
+Failed login
+rejected
+malformed
+
+2021-12-20 04:03:08 Login from 123.117.185.242 rejected due to unknown user name
+2021-12-20 04:03:10 Failed login from 113.104.6.132 for tangle
+2021-12-20 04:06:52 130.182.254.53 sent a malformed request
+
+Login from <HOST> rejected due to unknown user name
+Failed login from <HOST> for .*
+<HOST> sent a malformed request
+
+/etc/fail2ban/jail.d/honono.conf
+[hohono]
+enabled = true
+action = hohono
+filter = hohono
+logpath = /var/log/hohono.log
+maxretry = 10
+findtime = 3600
+
+/etc/fail2ban/filter.d/hohono.conf
+
+[Definition]
+failregex = Login from <HOST> rejected due to unknown user name
+            Failed login from <HOST> for .*
+            <HOST> sent a malformed request
+            Invalid heartbeat .* from <HOST>
+
+/etc/fail2ban/action.d/hohono.conf
+[Definition]
+actionban = /root/naughtylist add <ip>
+actionunban = /root/naughtylist remove <ip>
+
+
+system fail2ban restart
+/root/naughtylist refresh
