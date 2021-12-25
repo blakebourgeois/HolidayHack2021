@@ -1,0 +1,159 @@
+(dead ends)
+
+// Note: For this lab, we will be working with QRP Corporation's CQC-11 FPGA.
+// The CQC-11 operates with a 125MHz clock.
+// Your design for a tone generator must support the following 
+// inputs/outputs:
+// (NOTE: DO NOT CHANGE THE NAMES. OUR AUTOMATED GRADING TOOL
+// REQUIRES THE USE OF THESE NAMES!)
+// input clk - this will be connected to the 125MHz system clock
+// input rst - this will be connected to the system board's reset bus
+// input freq - a 32 bit integer indicating the required frequency
+//              (0 - 9999.99Hz) formatted as follows:
+//              32'hf1206 or 32'd987654 = 9876.54Hz
+// output wave_out - a square wave output of the desired frequency
+// you can create whatever other variables you need, but remember
+// to initialize them to something!
+
+`timescale 1ns/1ns
+module tone_generator (
+    input clk,
+    input rst,
+    input [31:0] freq,
+    output wave_out
+);
+    // ---- DO NOT CHANGE THE CODE ABOVE THIS LINE ---- 
+    // ---- IT IS NECESSARY FOR AUTOMATED ANALYSIS ----
+    // TODO: Add your code below. 
+	// Counter for toggling of clock
+	integer counter = 0;
+	reg sq_wave_reg = 0;
+	assign wave_out = sq_wave_reg;
+
+ always @(posedge clk) begin
+ 
+		if (rst) begin
+			counter <= 32'h00;
+			sq_wave_reg	 <= 1'b0;
+		end
+	
+		else begin 
+			
+			// If counter is zero, toggle sq_wave_reg 
+			if (counter == 32'h00) begin
+				sq_wave_reg <= ~sq_wave_reg;
+				
+				
+				// Generate 1Hz Frequency
+				//12500000
+				//counter <= (freq*5)/2 - 1;  // 500mhz solution
+				
+				//counter <= (freq*5)/2 - 1;  500mhz solution
+				//500mhz: no mods - 2500hz; 2500/500 = 5?
+				
+				//1hkz: no mods - 1250hz
+				//1hkz: (freq * (1250/1000)) / 2 - 1 = 1250.0000hz
+				// *2 = 625 (doubling halved it)
+				// /4 = 5000 (quartering multiplied it by 4)
+				// /2 = 2500 (halving multiplied it by 2)
+				// question? what do i multiply 1200 against to get 1000? (4/5)
+				counter <= $rtoi(freq * 10) - ($rtoi(freq) * 10) - 1;
+				
+				
+				//2khz: no mods - 625.0000Hz
+				//2khz: (freq * (625/2000)) / 2 -1 - not even square
+				//counter <= (freq * )/2 -1;
+			end 
+			
+			// Else count down
+			else 
+				counter <= counter - 1; 
+			end
+		end
+		
+endmodule
+
+
+
+
+https://electronics.stackexchange.com/questions/205749/generation-of-square-wave-using-veilog
+125MHz / 500Hz = 250000
+125MHz / 1kHz = 125000
+125MHz / 2kHz = 62500
+
+(125000000/freq)
+
+1MHz = 1000000 Hz
+1Khz = 1000 Hz
+
+
+always @(posedge clk)
+     begin
+        if (rst == 1'b1  ||  counter == 32'd249999) // period, count from 0 to n-1
+          counter <= 0;
+        else
+          counter <= counter + 1'b1;
+
+        // synchronous output without glitches
+        if (rst == 1'b0  &&  counter < 32'd125000) // duty cycle, m cycles high
+          dac_out = 1'b1;
+        else
+          dac_out = 1'b0;
+      end
+
+
+
+i don't understand what i did at all but it works
+some of my math was off, to make the period correctly i couldn't add enough 0s
+so i made it as large as i could then divided by 10 again on the other side
+using the code above based on the period handles all variations of frequencies
+
+// Note: For this lab, we will be working with QRP Corporation's CQC-11 FPGA.
+// The CQC-11 operates with a 125MHz clock.
+// Your design for a tone generator must support the following 
+// inputs/outputs:
+// (NOTE: DO NOT CHANGE THE NAMES. OUR AUTOMATED GRADING TOOL
+// REQUIRES THE USE OF THESE NAMES!)
+// input clk - this will be connected to the 125MHz system clock
+// input rst - this will be connected to the system board's reset bus
+// input freq - a 32 bit integer indicating the required frequency
+//              (0 - 9999.99Hz) formatted as follows:
+//              32'hf1206 or 32'd987654 = 9876.54Hz
+// output wave_out - a square wave output of the desired frequency
+// you can create whatever other variables you need, but remember
+// to initialize them to something!
+
+`timescale 1ns/1ns
+module tone_generator (
+    input clk,
+    input rst,
+    input [31:0] freq,
+    output wave_out
+);
+    // ---- DO NOT CHANGE THE CODE ABOVE THIS LINE ---- 
+    // ---- IT IS NECESSARY FOR AUTOMATED ANALYSIS ----
+    // TODO: Add your code below. 
+	// Counter for toggling of clock
+	integer counter = 0;
+	reg sq_wave_reg = 0;
+	assign wave_out = sq_wave_reg;
+    integer period = 0;
+
+    always @(posedge clk)
+        
+        begin
+        period <= (1250000000)/(freq/10);
+            if (rst == 1'b1  ||  counter == (period - 1)) // period, count from 0 to n-1
+                counter <= 0;
+            else
+                counter <= counter + 1'b1;
+
+            // synchronous output without glitches
+            if (rst == 1'b0  &&  counter < (period/2)) // duty cycle, m cycles high
+                sq_wave_reg <= 1'b1;
+            else
+                sq_wave_reg <= 1'b0;
+
+	    end
+		
+endmodule
